@@ -39,16 +39,22 @@ export function sanityDocsLoader() {
 
       store.clear();
       for (const page of pages) {
+        // StarlightはContent Loaderのエントリーをidで参照する
+        // slug.currentをそのままidとして使用（例: getting-started/what-is-figma）
         store.set({
           id: page.id,
           data: {
             title: page.title,
             description: page.description,
+            sidebar: {
+              order: page.order ?? 999,
+            },
           },
           body: page.body ?? '',
           rendered: {
             html: `<p>${(page.body ?? '').replace(/\n/g, '</p><p>')}</p>`,
           },
+          filePath: `src/content/docs/${page.id}.mdx`,
         });
       }
     },
