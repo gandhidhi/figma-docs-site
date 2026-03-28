@@ -11,12 +11,12 @@
     "@astrojs/starlight": "^0.32.5",
     "@sanity/client": "^7.20.0",
     "astro": "^5.7.13",
-    "sanity": "^5.18.0",
     "sharp": "^0.32.5",
     "zod": "3.25.76"
   },
   "devDependencies": {
     "fast-check": "^3.23.2",
+    "sanity": "^5.18.0",
     "vitest": "^3.1.3"
   }
 }
