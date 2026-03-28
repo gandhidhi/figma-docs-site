@@ -1,0 +1,100 @@
+---
+title: インストール方法
+description: Figmaデスクトップアプリのインストールとブラウザアクセスのセットアップ手順を解説します
+sidebar:
+  order: 2
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+Figmaはブラウザから直接使えますが、デスクトップアプリを使うとフォントの利用やオフライン作業が可能になります。
+
+<Aside type="tip">
+デスクトップアプリとブラウザ版は同じアカウントで利用できます。どちらを使っても機能に大きな差はありません。
+</Aside>
+
+## インストール手順
+
+<Tabs>
+  <TabItem label="Windows">
+    <Steps>
+      1. [figma.com/downloads](https://www.figma.com/downloads/) にアクセスします。
+
+      2. 「Desktop App」セクションの **Windows用ダウンロード** ボタンをクリックします。
+
+      3. ダウンロードされた `.exe` ファイルを実行します。
+
+      4. インストールウィザードの指示に従い、**Install** をクリックします。
+
+      5. インストール完了後、スタートメニューまたはデスクトップのショートカットから **Figma** を起動します。
+
+      6. ログイン画面が表示されたら、アカウント情報を入力してサインインします。
+    </Steps>
+
+    **動作環境**: Windows 10 以降（64ビット）
+  </TabItem>
+
+  <TabItem label="macOS">
+    <Steps>
+      1. [figma.com/downloads](https://www.figma.com/downloads/) にアクセスします。
+
+      2. 「Desktop App」セクションの **Mac用ダウンロード** ボタンをクリックします。
+
+      3. ダウンロードされた `.dmg` ファイルを開きます。
+
+      4. Figmaのアイコンを **Applications** フォルダにドラッグ＆ドロップします。
+
+      5. Launchpadまたは Applications フォルダから **Figma** を起動します。
+
+      6. 初回起動時に「インターネットからダウンロードされたアプリです」という警告が表示された場合は **開く** をクリックします。
+
+      7. ログイン画面が表示されたら、アカウント情報を入力してサインインします。
+    </Steps>
+
+    **動作環境**: macOS 11 (Big Sur) 以降。Apple Silicon (M1/M2/M3) にも対応しています。
+  </TabItem>
+
+  <TabItem label="ブラウザ">
+    <Steps>
+      1. Google Chrome、Firefox、Safari、またはEdgeを開きます。
+
+      2. アドレスバーに `figma.com` と入力してアクセスします。
+
+      3. 右上の **Log in** または **Sign up** をクリックします。
+
+      4. アカウントにログインするとFigmaのホーム画面が表示されます。
+
+      5. 既存のファイルをクリックするか、**New design file** をクリックして編集を開始します。
+    </Steps>
+
+    <Aside type="note">
+    ブラウザ版ではシステムフォントが利用できない場合があります。ローカルフォントを使用したい場合は、**Figma Font Helper** をインストールするか、デスクトップアプリを使用してください。
+    </Aside>
+
+    **推奨ブラウザ**: Google Chrome（最新版）
+  </TabItem>
+</Tabs>
+
+## デスクトップアプリとブラウザ版の比較
+
+| 機能 | デスクトップアプリ | ブラウザ版 |
+|---|---|---|
+| ローカルフォントの使用 | ✅ 対応 | ⚠️ Font Helper が必要 |
+| オフライン作業 | ✅ 対応（制限あり） | ❌ 非対応 |
+| 通知機能 | ✅ 対応 | ❌ 非対応 |
+| インストール | 必要 | 不要 |
+| 起動の手軽さ | ⚠️ アプリ起動が必要 | ✅ URLを開くだけ |
+
+## Figma Font Helperのインストール（ブラウザ版のみ）
+
+ブラウザ版でローカルフォントを使用したい場合は、Figma Font Helperをインストールします。
+
+<Steps>
+  1. [figma.com/downloads](https://www.figma.com/downloads/) にアクセスします。
+
+  2. 「Font Installers」セクションからお使いのOSに対応したFont Helperをダウンロードします。
+
+  3. ダウンロードしたファイルを実行してインストールします。
+
+  4. ブラウザでFigmaを開き直すと、ローカルフォントが使用できるようになります。
+</Steps>

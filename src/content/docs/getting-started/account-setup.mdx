@@ -1,0 +1,106 @@
+---
+title: アカウント作成とログイン
+description: Figmaアカウントの作成方法とログイン手順を解説します
+sidebar:
+  order: 3
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+Figmaを使い始めるにはアカウントが必要です。メールアドレスまたはGoogleアカウントで無料登録できます。
+
+## アカウントの作成
+
+<Tabs>
+  <TabItem label="メールアドレスで登録">
+    <Steps>
+      1. [figma.com](https://www.figma.com) にアクセスします。
+
+      2. トップページの **Get started for free** をクリックします。
+
+      3. メールアドレスを入力して **Continue** をクリックします。
+
+      4. パスワードを設定します（8文字以上、英数字を含む）。
+
+      5. 名前（フルネーム）を入力します。
+
+      6. 利用目的（デザイナー・エンジニア・学生など）を選択します。
+
+      7. 登録したメールアドレスに確認メールが届くので、メール内の **Verify email** リンクをクリックします。
+
+      8. メール確認が完了するとFigmaのホーム画面が表示されます。
+    </Steps>
+  </TabItem>
+
+  <TabItem label="Googleアカウントで登録">
+    <Steps>
+      1. [figma.com](https://www.figma.com) にアクセスします。
+
+      2. トップページの **Get started for free** をクリックします。
+
+      3. **Continue with Google** をクリックします。
+
+      4. Googleのログイン画面が表示されたら、使用するGoogleアカウントを選択します。
+
+      5. Figmaへのアクセス許可を求める画面で **許可** をクリックします。
+
+      6. 利用目的（デザイナー・エンジニア・学生など）を選択します。
+
+      7. Figmaのホーム画面が表示されます。
+    </Steps>
+
+    <Aside type="tip">
+    Googleアカウントで登録するとメール確認が不要なため、すぐに使い始められます。
+    </Aside>
+  </TabItem>
+</Tabs>
+
+## ログイン方法
+
+<Steps>
+  1. [figma.com](https://www.figma.com) にアクセスします。
+
+  2. 右上の **Log in** をクリックします。
+
+  3. 登録時に使用したメールアドレスを入力して **Continue** をクリックします。
+
+  4. パスワードを入力して **Log in** をクリックします（Googleアカウントの場合は **Continue with Google** を選択）。
+
+  5. ホーム画面が表示されればログイン完了です。
+</Steps>
+
+## プランの選択
+
+Figmaには複数のプランがあります。最初は無料の **Starter** プランで十分です。
+
+| プラン | 価格 | 主な制限 |
+|---|---|---|
+| Starter（無料） | 無料 | ドラフトファイル数に制限あり、チームプロジェクト3つまで |
+| Professional | 月額$15/人 | 無制限のプロジェクト、高度な共有設定 |
+| Organization | 月額$45/人 | SSO、組織全体のデザインシステム管理 |
+| Enterprise | 要問い合わせ | 高度なセキュリティ・管理機能 |
+
+<Aside type="note">
+学生・教育者は教育プログラムを通じてProfessionalプランを無料で利用できる場合があります。[Figma Education](https://www.figma.com/education/) を確認してください。
+</Aside>
+
+## パスワードを忘れた場合
+
+<Steps>
+  1. ログイン画面で **Forgot password?** をクリックします。
+
+  2. 登録済みのメールアドレスを入力して **Send reset link** をクリックします。
+
+  3. メールに届いたリセットリンクをクリックします。
+
+  4. 新しいパスワードを設定して **Reset password** をクリックします。
+</Steps>
+
+## プロフィールの設定
+
+ログイン後、右上のアバターアイコンから **Settings** を開くとプロフィールを編集できます。
+
+- **名前**: チームメンバーに表示される名前
+- **アバター画像**: プロフィール写真のアップロード
+- **通知設定**: コメントやメンションの通知方法
+- **言語設定**: UIの表示言語（英語のみ対応）
