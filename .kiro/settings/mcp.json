@@ -2,7 +2,7 @@
   "mcpServers": {
     "sanity": {
       "type": "http",
-      "url": "https://mcp.sanity.io/sse",
+      "url": "https://mcp.sanity.io",
       "headers": {
         "Authorization": "Bearer skvgwCCfSZf7YaUctNt6z9DQyrRC8TW2XfA0rolBmUp8efcN50JOua1Nwj1bk2qL0ss5cEDSm7sBuQLnRdIV8QrRWOGpdFfJ6VNLeaBgWncO264Xz8p63KyJIa83W9liDtzMurTQtT8W5nOAYt8KPpSrXVE4FlqfXU0xZT9dI2QZAbrsXwJK"
       },
