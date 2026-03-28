@@ -3,14 +3,16 @@
 ## 概要
 
 Figmaの使い方を解説する静的ドキュメントサイトを、Astro + Starlightフレームワークで構築する。
-コンテンツはフェーズ1でMDXファイルをローカル管理し、フェーズ2でヘッドレスCMS（Contentful / Sanity / Micro など）へ移行できる設計とする。
+コンテンツはフェーズ1でMDXファイルをローカル管理し、フェーズ2で **Sanity** ヘッドレスCMSへ移行できる設計とする。
+フェーズ2では **Sanity MCPサーバー**（`mcp.sanity.io`）を活用し、KiroなどのAI IDEからGROQクエリやドキュメント操作を自然言語で実行できる。
 
 ### 設計方針
 
-- **コンテンツ抽象化**: コンテンツ取得ロジックをアダプター層に集約し、MDXとCMSを差し替え可能にする
+- **コンテンツ抽象化**: コンテンツ取得ロジックをアダプター層に集約し、MDXとSanityを差し替え可能にする
 - **静的生成優先**: ビルド時に全ページを静的HTMLとして出力し、サーバーレス運用を実現する
 - **Starlight活用**: サイドバー・検索・TOC・ダークモードなどはStarlightの組み込み機能を最大限利用する
 - **段階的移行**: フェーズ1の実装がフェーズ2移行の障壁にならないよう、インターフェースを先に定義する
+- **MCP連携**: Sanity MCPサーバーをKiroに登録し、AIアシスタントによるコンテンツ操作を可能にする
 
 ---
 
@@ -19,40 +21,61 @@ Figmaの使い方を解説する静的ドキュメントサイトを、Astro + S
 ### 全体構成
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   ブラウザ (静的HTML)                  │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                   ブラウザ (静的HTML)                      │
+└─────────────────────────────────────────────────────────┘
                           ↑ 静的ファイル配信
-┌─────────────────────────────────────────────────────┐
-│          静的ホスティング (GitHub Pages / Netlify / Vercel) │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│        静的ホスティング (GitHub Pages / Netlify / Vercel)   │
+└─────────────────────────────────────────────────────────┘
                           ↑ npm run build
-┌─────────────────────────────────────────────────────┐
-│                   Astro ビルドパイプライン               │
-│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐  │
-│  │  Starlight   │  │  Pagefind    │  │  MDX処理  │  │
-│  │  (UI/Nav)    │  │  (検索Index) │  │  (remark) │  │
-│  └──────────────┘  └──────────────┘  └───────────┘  │
-│                          ↑                           │
-│  ┌─────────────────────────────────────────────────┐ │
-│  │           コンテンツアダプター層                   │ │
-│  │  ┌──────────────────┐  ┌──────────────────────┐ │ │
-│  │  │  LocalMDXAdapter │  │  HeadlessCMSAdapter  │ │ │
-│  │  │  (フェーズ1)      │  │  (フェーズ2)          │ │ │
-│  │  └──────────────────┘  └──────────────────────┘ │ │
-│  └─────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                   Astro ビルドパイプライン                   │
+│  ┌──────────────┐  ┌──────────────┐  ┌─────────────┐   │
+│  │  Starlight   │  │  Pagefind    │  │  MDX処理    │   │
+│  └──────────────┘  └──────────────┘  └─────────────┘   │
+│                          ↑                              │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │              コンテンツアダプター層                  │   │
+│  │  ┌─────────────────┐  ┌──────────────────────┐   │   │
+│  │  │ LocalMDXAdapter │  │   SanityAdapter      │   │   │
+│  │  │  (フェーズ1)     │  │   (フェーズ2)         │   │   │
+│  │  └─────────────────┘  └──────────────────────┘   │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+                                       ↑ GROQ API
+┌─────────────────────────────────────────────────────────┐
+│                    Sanity Cloud                          │
+│  ┌──────────────────┐  ┌──────────────────────────────┐ │
+│  │  Sanity Studio   │  │  Content Lake (データストア)   │ │
+│  │  (コンテンツ編集)  │  │                              │ │
+│  └──────────────────┘  └──────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘
+                                       ↑↓ MCP Protocol
+┌─────────────────────────────────────────────────────────┐
+│              Sanity MCPサーバー (mcp.sanity.io)           │
+│  ・GROQクエリ実行                                         │
+│  ・ドキュメント作成・更新・パッチ                            │
+│  ・スキーマ探索                                           │
+│  ・マイグレーション支援                                    │
+└─────────────────────────────────────────────────────────┘
+                                       ↑↓ MCP Client
+┌─────────────────────────────────────────────────────────┐
+│                  Kiro (AI IDE)                           │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ### フェーズ移行戦略
 
-| 項目 | フェーズ1 (MDXローカル) | フェーズ2 (ヘッドレスCMS) |
-|------|----------------------|------------------------|
-| コンテンツ保存先 | `src/content/docs/*.mdx` | CMS API (Contentful / Sanity / Micro) |
-| ビルド時データ取得 | Astro Content Collections | `getStaticPaths` + CMS SDK |
-| スキーマ定義 | `src/content/config.ts` | CMS側スキーマ + 型生成 |
-| アダプター | `LocalMDXAdapter` | `ContentfulAdapter` 等 |
-| 環境変数 | 不要 | `CMS_API_KEY`, `CMS_SPACE_ID` 等 |
+| 項目 | フェーズ1 (MDXローカル) | フェーズ2 (SanityヘッドレスCMS) |
+|------|----------------------|-------------------------------|
+| コンテンツ保存先 | `src/content/docs/*.mdx` | Sanity Content Lake |
+| ビルド時データ取得 | Astro Content Collections | `getStaticPaths` + `@sanity/client` |
+| スキーマ定義 | `src/content/config.ts` | `sanity/schemaTypes/docPage.ts` |
+| アダプター | `LocalMDXAdapter` | `SanityAdapter` |
+| 環境変数 | 不要 | `SANITY_PROJECT_ID`, `SANITY_DATASET`, `SANITY_API_TOKEN` |
+| コンテンツ編集 | テキストエディタ / Git | Sanity Studio (Web UI) |
+| AI連携 | なし | Sanity MCPサーバー経由でKiroから操作可能 |
 
 移行時に変更が必要なのはアダプター実装のみで、Starlightの設定・UIコンポーネント・ページルーティングは変更不要。
 
@@ -70,6 +93,10 @@ figma-docs-site/
 ├── public/
 │   ├── favicon.svg
 │   └── images/               # 静的画像アセット
+├── sanity/                   # フェーズ2で追加
+│   ├── sanity.config.ts
+│   └── schemaTypes/
+│       └── docPage.ts
 ├── src/
 │   ├── content/
 │   │   ├── config.ts         # Content Collections スキーマ定義
@@ -96,9 +123,11 @@ figma-docs-site/
 │   ├── adapters/
 │   │   ├── types.ts           # IContentAdapter インターフェース定義
 │   │   ├── local-mdx.ts       # LocalMDXAdapter (フェーズ1)
-│   │   └── headless-cms.ts    # HeadlessCMSAdapter スタブ (フェーズ2用)
+│   │   └── sanity.ts          # SanityAdapter (フェーズ2)
 │   └── components/
 │       └── custom/            # カスタムMDXコンポーネント (必要に応じて追加)
+├── .kiro/settings/
+│   └── mcp.json               # Sanity MCPサーバー設定
 └── dist/                      # ビルド出力 (gitignore)
 ```
 
@@ -159,6 +188,120 @@ export class LocalMDXAdapter implements IContentAdapter {
   }
 }
 ```
+
+### SanityAdapter (フェーズ2)
+
+`SANITY_PROJECT_ID` と `SANITY_DATASET` 環境変数が設定されている場合、ビルド時に `SanityAdapter` が使用される。
+
+```typescript
+// src/adapters/sanity.ts
+import { createClient } from '@sanity/client';
+import type { IContentAdapter, DocPage } from './types';
+
+const client = createClient({
+  projectId: import.meta.env.SANITY_PROJECT_ID,
+  dataset: import.meta.env.SANITY_DATASET ?? 'production',
+  useCdn: true,
+  apiVersion: '2024-01-01',
+});
+
+export class SanityAdapter implements IContentAdapter {
+  async getAllPages(): Promise<DocPage[]> {
+    const query = `*[_type == "docPage"] | order(order asc) {
+      "slug": slug.current,
+      title,
+      description,
+      category,
+      order,
+      "body": pt::text(body)
+    }`;
+    return client.fetch(query);
+  }
+
+  async getPageBySlug(slug: string): Promise<DocPage | null> {
+    const query = `*[_type == "docPage" && slug.current == $slug][0] {
+      "slug": slug.current,
+      title,
+      description,
+      category,
+      order,
+      "body": pt::text(body)
+    }`;
+    return client.fetch(query, { slug }) ?? null;
+  }
+
+  async getPagesByCategory(category: string): Promise<DocPage[]> {
+    const query = `*[_type == "docPage" && category == $category] | order(order asc) {
+      "slug": slug.current,
+      title,
+      description,
+      category,
+      order,
+      "body": pt::text(body)
+    }`;
+    return client.fetch(query, { category });
+  }
+}
+```
+
+### Sanityスキーマ定義 (フェーズ2)
+
+```typescript
+// sanity/schemaTypes/docPage.ts
+import { defineType, defineField } from 'sanity';
+
+export const docPage = defineType({
+  name: 'docPage',
+  title: 'ドキュメントページ',
+  type: 'document',
+  fields: [
+    defineField({ name: 'title', title: 'タイトル', type: 'string', validation: Rule => Rule.required() }),
+    defineField({ name: 'description', title: '概要', type: 'string', validation: Rule => Rule.required() }),
+    defineField({ name: 'slug', title: 'スラッグ', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required() }),
+    defineField({
+      name: 'category', title: 'カテゴリ', type: 'string',
+      options: { list: [
+        { title: 'はじめに', value: 'getting-started' },
+        { title: '基本操作', value: 'basics' },
+        { title: '応用操作', value: 'advanced' },
+        { title: 'リファレンス', value: 'reference' },
+      ]},
+      validation: Rule => Rule.required()
+    }),
+    defineField({ name: 'order', title: '表示順', type: 'number' }),
+    defineField({ name: 'body', title: '本文', type: 'array', of: [{ type: 'block' }] }),
+  ],
+});
+```
+
+### Sanity MCPサーバー設定
+
+Kiro から Sanity コンテンツを自然言語で操作するための MCP 設定。実際の Sanity MCP サーバーはホスト型（`mcp.sanity.io`）のため、Sanity CLI による自動設定または StreamableHTTP 形式での設定を推奨する。
+
+```json
+// .kiro/settings/mcp.json
+{
+  "mcpServers": {
+    "sanity": {
+      "command": "npx",
+      "args": ["-y", "@sanity/mcp-server@latest"],
+      "env": {
+        "SANITY_PROJECT_ID": "${SANITY_PROJECT_ID}",
+        "SANITY_DATASET": "production",
+        "SANITY_API_TOKEN": "${SANITY_API_TOKEN}"
+      },
+      "disabled": false,
+      "autoApprove": ["query_documents", "get_document"]
+    }
+  }
+}
+```
+
+MCPサーバーが有効な場合、Kiroから以下の操作が可能になる:
+- GROQクエリによるコンテンツ検索・取得
+- ドキュメントの作成・更新・パッチ適用
+- スキーマ構造の探索
+- マイグレーション支援
 
 ### Starlight 設定 (astro.config.mjs)
 
@@ -281,18 +424,18 @@ import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 </Tabs>
 ```
 
-### フェーズ2: ヘッドレスCMSデータモデル対応表
+### フェーズ2: Sanityデータモデル対応表
 
-フェーズ2移行時、CMSのコンテンツタイプは以下のフィールドを持つよう設計する。
+フェーズ2移行時、Sanityの `docPage` コンテンツタイプは以下のフィールドを持つ。
 
-| CMSフィールド | 対応するMDXフロントマター | 型 |
-|-------------|----------------------|-----|
-| `title` | `title` | Short Text |
-| `description` | `description` | Short Text |
-| `slug` | ファイルパス由来 | Short Text (unique) |
-| `category` | ディレクトリ名由来 | Reference / Enum |
-| `order` | `sidebar.order` | Integer |
-| `body` | MDXボディ | Rich Text / Markdown |
+| Sanityフィールド | 対応するMDXフロントマター | 型 | 必須 |
+|----------------|----------------------|-----|------|
+| `title` | `title` | String | ✅ |
+| `description` | `description` | String | ✅ |
+| `slug` | ファイルパス由来 | Slug (unique) | ✅ |
+| `category` | ディレクトリ名由来 | String (Enum) | ✅ |
+| `order` | `sidebar.order` | Number | - |
+| `body` | MDXボディ | Array of Blocks (Portable Text) | - |
 
 
 ---
@@ -325,6 +468,18 @@ import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 
 **検証対象: 要件 2.1, 4.1**
 
+### プロパティ5: SanityAdapterのGROQラウンドトリップ
+
+*任意の* Sanityドキュメントスラッグに対して、`SanityAdapter.getPageBySlug(slug)` を呼び出した結果のスラッグが、入力スラッグと一致する。
+
+**検証対象: 要件 11.3, 11.5**
+
+### プロパティ6: SanityAdapterのカテゴリフィルタリング一貫性
+
+*任意の* カテゴリ名に対して、`SanityAdapter.getPagesByCategory(category)` が返す全ページのカテゴリフィールドが、入力カテゴリ名と一致する。
+
+**検証対象: 要件 11.3**
+
 ---
 
 ## エラーハンドリング
@@ -337,13 +492,15 @@ import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 | 壊れた内部リンク | MDX内のリンク先ページが存在しない | Starlightの `checkLinks` 設定でビルド警告を出力 |
 | 無効なコンポーネント | MDXで未インポートのコンポーネントを使用 | Astroのビルドエラーとして報告 |
 
-### フェーズ2移行時のエラー
+### フェーズ2移行時のエラー (Sanity固有)
 
 | エラー種別 | 発生条件 | 対応 |
 |-----------|---------|------|
-| CMS API認証失敗 | 環境変数 `CMS_API_KEY` が未設定または無効 | ビルド開始時に早期エラーを出力し、必要な環境変数を明示 |
-| CMS接続タイムアウト | ビルド時のAPI呼び出しがタイムアウト | リトライロジック（最大3回）を実装し、失敗時はエラーメッセージを出力 |
-| スキーマ不一致 | CMSのコンテンツタイプとアダプターの型定義が不一致 | TypeScriptの型チェックでビルド前に検出 |
+| 環境変数未設定 | `SANITY_PROJECT_ID` が未設定 | ビルド開始時に早期エラーを出力し、必要な環境変数名を明示してexit code 1で終了 |
+| GROQ構文エラー | 不正なGROQクエリを実行 | `@sanity/client` がエラーをスローし、クエリ文字列と行番号を含むエラーメッセージを出力 |
+| Sanity API rate limit | 短時間に大量のAPIリクエスト | 429レスポンス受信時にリトライロジック（最大3回、指数バックオフ）を実装 |
+| スキーマ不一致 | Sanityのコンテンツタイプとアダプターの型定義が不一致 | TypeScriptの型チェックでビルド前に検出 |
+| 認証エラー | `SANITY_API_TOKEN` が無効または期限切れ | 401/403レスポンス受信時に認証エラーメッセージを出力してexit code 1で終了 |
 
 ### ランタイムエラー（静的サイトのため最小限）
 
@@ -455,7 +612,45 @@ test('getPagesByCategoryの一貫性', async () => {
 });
 ```
 
-### ファイル構造テスト
+フェーズ2実装時は `tests/property/sanity-adapter.property.test.ts` に以下を追加する:
+
+```typescript
+// Feature: figma-docs-site, Property 5: SanityAdapterのGROQラウンドトリップ
+// SanityAdapterをモックまたはサンドボックス環境で動作させ検証する
+test('SanityAdapter getPageBySlugのラウンドトリップ', async () => {
+  const adapter = new SanityAdapter(); // サンドボックスプロジェクト使用
+  const allPages = await adapter.getAllPages();
+  const slugs = allPages.map(p => p.slug);
+
+  await fc.assert(
+    fc.asyncProperty(
+      fc.constantFrom(...slugs),
+      async (slug) => {
+        const page = await adapter.getPageBySlug(slug);
+        return page !== null && page.slug === slug;
+      }
+    ),
+    { numRuns: 100 }
+  );
+});
+
+// Feature: figma-docs-site, Property 6: SanityAdapterのカテゴリフィルタリング一貫性
+test('SanityAdapter getPagesByCategoryの一貫性', async () => {
+  const adapter = new SanityAdapter();
+  const categories = ['getting-started', 'basics', 'advanced', 'reference'];
+
+  await fc.assert(
+    fc.asyncProperty(
+      fc.constantFrom(...categories),
+      async (category) => {
+        const pages = await adapter.getPagesByCategory(category);
+        return pages.every(p => p.category === category);
+      }
+    ),
+    { numRuns: 100 }
+  );
+});
+```
 
 ```typescript
 // tests/unit/content-structure.test.ts

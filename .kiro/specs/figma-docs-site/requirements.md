@@ -157,3 +157,32 @@ gooseドキュメントサイト（https://block.github.io/goose/docs/category/g
 2. THE Site SHALL be deployable to GitHub Pages, Netlify, or Vercel without server-side runtime dependencies.
 3. THE Site SHALL include a `public/` directory for static assets such as images and favicon.
 4. IF a broken internal link is detected during build, THEN THE Build SHALL output a warning identifying the source file and target URL.
+
+---
+
+### 要件11: Sanityヘッドレスコンテンツ管理（フェーズ2）
+
+**ユーザーストーリー:** コンテンツ管理者として、Sanity Studioからドキュメントを編集・公開したい。そうすることで、コードを触らずにコンテンツを更新できる。
+
+#### 受け入れ基準
+
+1. THE Site SHALL integrate with Sanity as the headless CMS in Phase 2.
+2. THE Site SHALL define a `docPage` content type in Sanity schema with fields: `title` (string, required), `description` (string, required), `slug` (slug, required, unique), `category` (string, required), `order` (number), `body` (array of blocks / Portable Text).
+3. THE SanityAdapter SHALL implement IContentAdapter and fetch content via GROQ queries using `@sanity/client`.
+4. WHEN `SANITY_PROJECT_ID` and `SANITY_DATASET` environment variables are set, THE Build SHALL use SanityAdapter instead of LocalMDXAdapter.
+5. THE Site SHALL generate static pages at build time from Sanity content using `getStaticPaths`.
+6. WHEN Sanity API returns an error, THE Build SHALL output a descriptive error message and exit with a non-zero status code.
+
+---
+
+### 要件12: Sanity MCPサーバー連携
+
+**ユーザーストーリー:** 開発者として、KiroからSanity MCPサーバー経由でコンテンツを自然言語で操作したい。そうすることで、コンテンツの作成・更新・クエリをAIアシスタントと協力して効率的に行える。
+
+#### 受け入れ基準
+
+1. THE Project SHALL include a `.kiro/settings/mcp.json` configuration file that registers the Sanity MCP server (`mcp.sanity.io`).
+2. WHEN the Sanity MCP server is configured, THE AI assistant SHALL be able to execute GROQ queries against the Sanity dataset.
+3. WHEN the Sanity MCP server is configured, THE AI assistant SHALL be able to create, update, and patch Sanity documents using natural language instructions.
+4. THE MCP configuration SHALL support both OAuth and token-based authentication methods.
+5. THE Project SHALL include documentation in README.md explaining how to configure and use the Sanity MCP server with Kiro.
