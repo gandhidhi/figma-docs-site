@@ -1,0 +1,35 @@
+---
+title: Figma ドキュメント
+description: Figmaの使い方をインストールから応用操作まで解説するドキュメントサイトです。
+template: splash
+hero:
+  title: Figma ドキュメント
+  tagline: インストールから応用操作まで、Figmaの使い方を丁寧に解説します。
+  actions:
+    - text: はじめる
+      link: /getting-started/what-is-figma/
+      icon: right-arrow
+      variant: primary
+    - text: インストール方法
+      link: /getting-started/installation/
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## ドキュメントの構成
+
+<CardGrid>
+  <Card title="はじめに" icon="open-book">
+    Figmaの概要、インストール方法、アカウント作成を解説します。
+  </Card>
+  <Card title="基本操作" icon="pencil">
+    画面構成、ファイル管理、フレーム、コンポーネントの基本を学びます。
+  </Card>
+  <Card title="応用操作" icon="rocket">
+    オートレイアウト、プロトタイプ、チーム共有など実務で使う機能を解説します。
+  </Card>
+  <Card title="リファレンス" icon="list-format">
+    ショートカットキー一覧と用語集をまとめています。
+  </Card>
+</CardGrid>
