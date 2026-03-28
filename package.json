@@ -4,8 +4,9 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "node scripts/sync-from-sanity.mjs && astro build",
+    "preview": "astro preview",
+    "sync": "node scripts/sync-from-sanity.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.32.5",

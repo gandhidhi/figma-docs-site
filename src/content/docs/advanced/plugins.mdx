@@ -5,114 +5,41 @@ sidebar:
   order: 4
 ---
 
-import { Steps, Aside, Card, CardGrid } from '@astrojs/starlight/components';
-
 Figmaプラグインを使うと、標準機能では対応していない作業を自動化・効率化できます。コミュニティには数千のプラグインが公開されています。
 
-## プラグインをインストールする
+プラグインをインストールする
 
-<Steps>
-  1. Figmaのファイルを開きます。
+プラグインを実行する
 
-  2. ツールバーのFigmaメニュー（左上の「F」アイコン）をクリックします。
+おすすめプラグイン
 
-  3. **Plugins** → **Browse plugins in Community** を選択します。
+コンテンツ・データ系
 
-  4. Figma Communityのプラグインページが開きます。
+&lt;/CardGrid&gt;
 
-  5. 使いたいプラグインを検索して見つけます。
+デザイン効率化系
 
-  6. プラグインのページで **Install** ボタンをクリックします。
+&lt;/CardGrid&gt;
 
-  7. インストール完了後、Figmaメニュー → **Plugins** から使用できます。
-</Steps>
+アクセシビリティ系
 
-## プラグインを実行する
+&lt;/CardGrid&gt;
 
-<Steps>
-  1. ツールバーのFigmaメニュー → **Plugins** を選択します。
+開発連携系
 
-  2. インストール済みのプラグイン一覧が表示されます。
+&lt;/CardGrid&gt;
 
-  3. 使いたいプラグインをクリックして起動します。
+プラグインの管理
 
-  4. または `Ctrl/Cmd + /` でクイック検索からプラグインを起動できます。
-</Steps>
+プラグインを削除する
 
-<Aside type="tip">
-よく使うプラグインは右クリックメニューの **Plugins** からも素早くアクセスできます。
-</Aside>
-
-## おすすめプラグイン
-
-### コンテンツ・データ系
-
-<CardGrid>
-  <Card title="Content Reel" icon="document">
-    テキストや画像のダミーデータを自動挿入します。名前・住所・メールアドレスなどのリアルなサンプルデータでデザインを埋められます。
-  </Card>
-  <Card title="Unsplash" icon="image">
-    Unsplashの高品質なフリー写真を直接Figmaに挿入できます。プレースホルダー画像の代わりに使えます。
-  </Card>
-</CardGrid>
-
-### デザイン効率化系
-
-<CardGrid>
-  <Card title="Iconify" icon="star">
-    Material Icons・Font Awesome・Heroiconsなど、数十万のアイコンを検索して挿入できます。
-  </Card>
-  <Card title="Figma to Code" icon="laptop">
-    選択したデザインをHTML/CSS・React・SwiftUI・Jetpack Composeなどのコードに変換します。
-  </Card>
-</CardGrid>
-
-### アクセシビリティ系
-
-<CardGrid>
-  <Card title="Contrast" icon="eye">
-    テキストと背景色のコントラスト比をWCAGガイドラインに基づいてチェックします。
-  </Card>
-  <Card title="A11y - Focus Order" icon="approve-check">
-    フォーカス順序を視覚化し、キーボードナビゲーションのアクセシビリティを確認できます。
-  </Card>
-</CardGrid>
-
-### 開発連携系
-
-<CardGrid>
-  <Card title="Zeplin" icon="external">
-    デザインをZeplinに同期し、エンジニアへのデザイン引き渡しを効率化します。
-  </Card>
-  <Card title="Storybook Connect" icon="external">
-    StorybookのコンポーネントをFigmaのコンポーネントにリンクします。
-  </Card>
-</CardGrid>
-
-## プラグインの管理
-
-### プラグインを削除する
-
-<Steps>
-  1. Figmaメニュー → **Plugins** → **Manage plugins** を選択します。
-
-  2. 削除したいプラグインの横にある **...** メニューをクリックします。
-
-  3. **Remove** を選択します。
-</Steps>
-
-### プラグインの権限について
+プラグインの権限について
 
 プラグインはFigmaファイルへのアクセス権を持ちます。信頼できる開発者のプラグインのみインストールするようにしましょう。
 
-<Aside type="note">
-プラグインはFigmaのサンドボックス環境で動作するため、ファイルシステムへの直接アクセスはできません。ただし、ネットワーク通信を行うプラグインもあるため、機密性の高いデザインを扱う場合は注意が必要です。
-</Aside>
-
-## プラグインの開発
+プラグインの開発
 
 Figmaプラグインは TypeScript/JavaScript で開発できます。自社のワークフローに特化したプラグインを作成することも可能です。
-
-- [Figma Plugin API ドキュメント](https://www.figma.com/plugin-docs/)
-- プラグインはFigma Communityで公開・配布できる
-- 社内限定のプライベートプラグインとして配布することも可能
+Figma Plugin API ドキュメント
+プラグインはFigma Communityで公開・配布できる
+社内限定のプライベートプラグインとして配布することも可能
